@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
 from flask.json import JSONEncoder
-import secrets as s
+import public_html.db_secrets as s
 
 app = Flask(__name__) 
 app.config['MYSQL_HOST'] = s.MYSQL_HOST
