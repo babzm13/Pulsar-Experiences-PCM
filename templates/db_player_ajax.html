@@ -1,0 +1,62 @@
+{% extends "db_base.html" %}
+
+{% block head %}
+<title>Your LARP Here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="static/player_functions.js"></script>
+{% endblock %}
+
+{% block body %}
+	<div class="whole_row">
+		<h2>Player Information</h2>
+		<div class="player_column">
+			<p id="phone_error">Error with phone number. Data has not been saved. Please update and try again.</p>
+			<p>Reward Points: {{rows[0]['rewards']}}</p>
+			<p><label>First Name:</label><input type="text" name="first" id="first" value="{{rows[0]['first_name']}}"/></p>
+			<p><label>Last Name:</label><input type="text" name="last" id="last" value="{{rows[0]['last_name']}}"/></p>
+			<p><label>Primary Email:</label><input type="text" name="email" id="email" value="{{rows[0]['primary_email']}}"/></p>
+			<p><label>Pronouns:</label><input type="text" name="pronouns" id="pronouns" value="{{rows[0]['pronouns']}}"/></p>
+			<p><label>Emergency Contact Name:</label><input type="text" name="e_c_n" id="e_c_n" value="{{rows[0]['emergency_contact_name']}}" /></p>
+			<p><label>Emergency Contact Phone Number:</label><input type="text" name="e_c_p" id="e_c_p" value="{{rows[0]['emergency_contact_phone']}}" /></p>
+
+			<input type="Submit" name="change" value="Update Information" onclick="change_values();" />
+		
+			<div id="update_complete">
+				<p id="good_to_go">Your data has been updated.</p>
+			</div>
+		</div>
+
+		<div class="player_column">
+			<input type="Submit" name="change_pw" id="password_button" value="Change Password" onclick="toggle_password();" />
+			
+			<div id="change_password">
+				<p><label>Original Password:</label><input type="password" name="orgpw" id="orgpw" /></p>
+				<p><label>New Password:</label><input type="password" name="newpw1" id="newpw1" /></p>
+				<p><label>New Password (again):</label><input type="password" name="newpw2" id="newpw2" /></p>
+				<input type="Submit" name="change" value="Change Password" onclick="change_password();" />
+				<input type="Submit" name="hide_pw" value="Hide Password" onclick="toggle_password();" />
+			</div>
+		</div>
+
+		<div class="player_column">
+			<input type="Submit" name="show_lr" id="legal_release_button" value="Sign Legal Release" onclick="toggle_lr();" />
+
+			<div id="legal_release">
+				<pre id="leg_rel_text">{{lrr[0]['legal_release_text']}}</pre>
+
+				{% if rows[0]['date_signed'] is not none %}
+					<p id="date_signed">You last signed on {{rows[0]['date_signed']}}. You can update your signature below.</p>
+				{% else %}
+					<p id="date_signed">You have not yet signed a legal release. Please do so below.</p>
+				{% endif %}
+
+				<p>By putting your name in this box, you agree to the terms laid out in this legal release.</p>
+				<p>Note: this document does not require you to deadname yourself. By signing, you agree to abide by the restrictions of the legal release, even if your legal name is not the name used to sign.</p>
+				
+				<p><label>Name: </label><input type="text" id="lr_name" /></p>
+				<input type="Submit" name="lr_update" value="Update Legal Release" onclick="update_lr();" />
+				<input type="Submit" name="hide_lr" value="Hide Legal Release" onclick="toggle_lr();" />
+			</div>
+		</div>
+	</div>
+{% endblock %}

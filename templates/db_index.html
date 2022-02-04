@@ -1,0 +1,26 @@
+{% extends "db_base.html" %}
+
+{% block head %}
+<title>Your LARP Here</title>
+<script src="static/db_index_functions.js"></script>
+{% endblock %}
+
+{% block body %}
+	<div>
+		<h2>Database Main</h2>
+		{% if data|length != 0 %}
+			<p>Welcome, {{data[0]['first_name']}}. Please use the menu above to choose where to go.</p>
+		{% else %}
+			<p>You are not logged in. Please create an account or log in below.</p>
+		{% endif %}
+		
+		
+		{% if data|length != 0 %}
+			<button id="logout" onclick="logout()">Log out</button>
+		{% else %}
+			<button id="signup" onclick="signup()">Sign up for a new account</button>
+			<br/><br/>
+			<button id="login" onclick="login()">Log in with an existing account</button>
+		{% endif %}
+	</div>
+{% endblock %}

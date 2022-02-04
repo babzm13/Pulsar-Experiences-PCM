@@ -1,0 +1,33 @@
+{% extends "db_base.html" %}
+
+{% block head %}
+<title>Your LARP Here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="static/character_functions.js"></script>
+{% endblock %}
+
+{% block body %}
+	<div class="whole_row">
+		<h2>Create a New Character</h2>
+		<form method="POST" action="new_char">
+			<p><label>Name: </label><input type="text" id="name" name="name" /></p>
+			<p><label>Species: </label>
+				<select id="species" name="species">
+				{% for spec in species %}
+					<option value="{{spec.idspecies}}">{{spec.species_name}}</option>
+				{% endfor %}
+				</select>
+			</p>
+			<p><label>Class: </label>
+				<select id="class" name="class">
+				{% for class in classes %}
+					<option value="{{class.idclasses}}">{{class.name}}</option>
+				{% endfor %}
+				</select>
+			</p>
+			<p><label>Bio: </label><textarea rows="4" cols="30"name="bio" id="bio"></textarea></p>
+			<p>Picture: <input type="url" name="pic" id="pic" /></p>
+			<input type="Submit" value="Create Character">
+		</form>
+	</div>
+{% endblock %}

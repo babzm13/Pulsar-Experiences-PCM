@@ -1,0 +1,15 @@
+{% extends "db_base.html" %}
+
+{% block body %}
+	{% if error is not none %}
+		<p class="error">{{error}}</p>
+	{% endif %}
+	
+	<h1>Log in to an existing account</h1>
+	
+	<form method="POST" action="login">
+		<p>Email: <input type="text" name="email"></p>
+		<p>Password:  <input type="password" name="password"></p>
+		<input type="submit" value="Login!">
+	</form>
+{% endblock body %}

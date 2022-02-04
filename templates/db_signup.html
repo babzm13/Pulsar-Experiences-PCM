@@ -1,0 +1,20 @@
+{% extends "db_base.html" %}
+
+{% block head %}
+<title>Your LARP Here</title>
+{% endblock %}
+
+{% block body %}
+		{% if error %}
+			<h2 class="error">{{error}}</h2>
+		{% endif %}
+		
+		<h1>Sign up for a new account</h1>
+		
+		<form method="POST" action="signup">
+			<p><label>Email: </label><input type="text" name="email"></p>
+			<p><label>Password: </label><input type="password" name="password"></p>
+			<p><label>Re-enter Password: </label><input type="password" name="password_two"></p>
+			<input type="submit" value="Sign up!">
+		</form>
+{% endblock %}

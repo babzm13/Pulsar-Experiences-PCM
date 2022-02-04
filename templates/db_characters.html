@@ -1,0 +1,58 @@
+{% extends "db_base.html" %}
+
+{% block head %}
+<title>Your LARP Here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="static/character_functions.js"></script>
+{% endblock %}
+
+{% block body %}
+	<div class="whole_row">
+		<h2>{{pc_data[0]['first_name']}}'s Characters</h2>
+		<div class="characters_column">
+			<h3>Real Characters</h3>
+			{% for char in characters %}
+				{% if char['playground_flag'] == 0 %}
+					<p><input type="Submit" value="{{char.name}}" onclick="display('{{char.idcharacters}}');" /></p>
+					<div class="character" id="char_{{char.idcharacters}}">
+						<p>XP: {{char.xp}}</p>
+						<p>HP: {{char.hp}}</p>
+						<p>MP: {{char.mp}}</p>
+						<p>Species: {{char.species_name}}</p>
+						<p>Class: {{char.class_name}}</p>
+						<p>Bio: {{char.bio}}</p>
+						<p>Picture: {{char.picture}}</p>
+						<p>Last Saved: {{char.last_saved}}</p>
+					</div>
+				{% endif %}
+			{% endfor %}
+			<p><input type="Submit" value="Create New Character" onclick="location.href='new_char'" /></p>
+		</div>
+		<div class="characters_column">
+			<h3>Playground Characters</h3>
+			{% for char in characters %}
+				{% if char['playground_flag'] == 1 %}
+					<p><input type="Submit" value="{{char.name}}" onclick="display('{{char.idcharacters}}');" /></p>
+					<div class="character" id="char_{{char.idcharacters}}">
+						<p><label>XP: </label><input type="number" value="{{char.xp}}" id="{{char.idcharacters}}" /></p>
+						<p id="{{char.idcharacters}}hp">HP: {{char.hp}}</p>
+						<p id="{{char.idcharacters}}mp">MP: {{char.mp}}</p>
+						{% if char.species_name is not none %}
+							<p>Species: {{char.species_name}}</p>
+						{% else %}
+							<p>Species: none chosen yet</p>
+						{% endif %}
+						{% if char.class_name is not none %}
+							<p>Class: {{char.class_name}}</p>
+						{% else %}
+							<p>Class: none chosen yet</p>
+						{% endif %}
+						<p>Bio: {{char.bio}}</p>
+						<p>Picture: {{char.picture}}</p>
+					</div>
+				{% endif %}
+			{% endfor %}
+			<p><input type="Submit" value="Create New Playground Character" onclick="location.href='new_p_char'" /></p>
+		</div>
+	</div>
+{% endblock %}
