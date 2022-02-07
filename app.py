@@ -3,7 +3,8 @@ from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
 from flask.json import JSONEncoder
-import public_html.db_secrets as s
+#import public_html.db_secrets as s
+import db_secrets as s
 
 app = Flask(__name__) 
 app.config['MYSQL_HOST'] = s.MYSQL_HOST
@@ -24,7 +25,7 @@ MP = 0
 def validate_email(email):
     return "@" in email and "." in email
 
-#Returns the player information
+#Returns player information via user email lookup
 def get_player_data(email):
     cursor = mysql.connection.cursor()
     query = """SELECT
@@ -54,6 +55,7 @@ def get_player_data(email):
     
     return results
 
+#Returns character data from idplayers
 def get_character_data(p_id):
     cursor = mysql.connection.cursor()
     query = """SELECT
@@ -84,6 +86,7 @@ def get_character_data(p_id):
     
     return results
 
+#Returns character data from idcharacters
 def get_character(char_id):
     cursor = mysql.connection.cursor()
     query = """SELECT
@@ -113,12 +116,15 @@ def get_character(char_id):
     
     return results
 
+#Calculates current HP
 def get_hp(xp):
     return 5*int(xp) + 2;
     
+#Calculates current MP
 def get_mp(xp):
     return 10*int(xp) + 4;
 
+#Returns the hashed password for the given user email
 def get_password(email):
     cursor = mysql.connection.cursor()
     query = "SELECT password FROM users WHERE email=%s"
@@ -129,6 +135,7 @@ def get_password(email):
     
     return results
 
+#Checks timestamp on legal release against 1 year, and updates database if LR is older than 1 year
 def update_legal_release(email):
     results=get_player_data(email)
     
@@ -152,6 +159,7 @@ def update_legal_release(email):
         cursor.execute(query, queryVars)
         mysql.connection.commit()
 
+#Validates given number as phone number
 def validate_phone(phone):
     phone = phone.replace('(', '')
     phone = phone.replace(')', '')
@@ -169,6 +177,7 @@ def validate_phone(phone):
     
     return phone
 
+#Verifies session is active
 def verify_session():
     try:
         session['users']
@@ -176,6 +185,7 @@ def verify_session():
     except:
         return False
 
+#Returns all species
 def get_species():
     cursor = mysql.connection.cursor()
     query = "SELECT * FROM species;"
@@ -185,7 +195,8 @@ def get_species():
     results = cursor.fetchall()
     
     return results
-    
+
+#Returns all classes
 def get_classes():
     cursor = mysql.connection.cursor()
     query = "SELECT * FROM classes;"
@@ -198,30 +209,37 @@ def get_classes():
 
 
 #start of pages
+#Index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+#About page
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+#Policies Page
 @app.route('/policies')
 def policies():
     return render_template('policies.html')
 
+#Rules Page
 @app.route('/rules')
 def rules():
     return render_template('rules.html')
 
+#Donations Page
 @app.route('/donations')
 def donations():
     return render_template('donations.html')
 
+#Contact Page
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
 
+#Index for the database portion: if logged in, displays message, otherwise prompts to log in/create user
 @app.route('/db_index')
 def db_index():
     email=session.get('users')
@@ -232,7 +250,8 @@ def db_index():
         results = []
     
     return render_template('db_index.html', data=results)
-    
+
+#Signs user up for an account on the database
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     if request.method == 'GET':
@@ -278,6 +297,7 @@ def signup():
             else:
                 return render_template('db_signup.html', error="Passwords don't match. Please try again.")
 
+#Allows user to log in if they exist in the database
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'GET':
@@ -300,12 +320,14 @@ def login():
                 return redirect(url_for('login', error="Passwords don't match"))
         else:
             return redirect(url_for('db_index', error="Error fetching data"))
-            
+
+#Logs user out
 @app.route('/logout')
 def logout():
     session.pop('users', None)
     return redirect(url_for('db_index'))
 
+#Generates the player information page, where users can update their profiles, legal releases and passwords
 @app.route('/player_info')
 def player_info():
     if verify_session():
@@ -327,6 +349,7 @@ def player_info():
     else:
         return redirect(url_for('db_index'))
 
+#Generates characters page where players can create and manage characters
 @app.route('/characters')
 def characters():
     if verify_session():
@@ -342,6 +365,7 @@ def characters():
     else:
         return redirect(url_for('db_index'))
 
+#AJAX method for changing password
 @app.route('/change_password', methods=['GET','POST'])
 def change_password():
     if request.method == 'POST':
@@ -389,6 +413,7 @@ def change_password():
     
     return jsonify(results)
 
+#AJAX method for processing updated player data
 @app.route('/process_pc_data', methods=['GET', 'POST'])
 def process_pc_data():
     if request.method == "POST":
@@ -425,7 +450,8 @@ def process_pc_data():
          
             results={'processed': 'false'}
             return jsonify(results)
-    
+
+#AJAX method for updating the legal release
 @app.route('/update_legal_release', methods=['GET','POST'])
 def update_lr():
     if request.method=="POST":
@@ -448,7 +474,8 @@ def update_lr():
         results = {"processed": "true"}
         
         return jsonify(results)
-    
+
+#AJAX method for updating the date on the legal release
 @app.route('/get_lr_date')
 def get_lr_date():
     if verify_session():
@@ -458,7 +485,8 @@ def get_lr_date():
         return render_template('db_lr_date.html', results=results)
     else:
         return redirect(url_for('db_index'))
-    
+
+#Page for creating a new character
 @app.route('/new_char', methods=["GET", "POST"])
 def new_character():
     if verify_session():
@@ -491,7 +519,8 @@ def new_character():
             return redirect(url_for('characters'))
     else:
         return redirect(url_for('db_index'))
-    
+
+#Page for creating a new playground character
 @app.route('/new_p_char', methods=["GET", "POST"])
 def new_p_character():
     if verify_session():
@@ -525,7 +554,8 @@ def new_p_character():
             return redirect(url_for('characters'))
     else:
         return redirect(url_for('db_index'))
-    
+
+#Updates HP and MP based on XP for playground characters
 @app.route('/update_hp_mp', methods=["POST"])
 def update_hp_mp():
     if verify_session():
@@ -563,6 +593,7 @@ def update_hp_mp():
     else:
         return redirect(url_for('db_index'))
 
+#AJAX method to update HP and MP on playground character
 @app.route('/new_hp_mp', methods=["POST"])
 def new_hp_mp():
     if verify_session():

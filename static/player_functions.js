@@ -44,6 +44,11 @@ function change_values() {
 function toggle_password() {
 	$("#change_password").toggleClass("hidden");
 	$("#password_button").toggleClass("hidden");
+	if($("#password_button").attr("value") == "Hide Change Password") {
+		$("#password_button").attr("value", "Show Change Password");
+	} else {
+		$("#password_button").attr("value", "Hide Change Password")
+	}
 
 }
 
@@ -105,4 +110,9 @@ function update_lr() {
 function toggle_lr() {
 	$("#legal_release").toggleClass("hidden");
 	$("#legal_release_button").toggleClass("hidden");
+	if($("#legal_release_button").attr("value") == "Show Legal Release") {
+		$("#legal_release_button").attr("value", "Hide Legal Release");
+	} else {
+		$("#legal_release_button").attr("value", "Show Legal Release");
+	}
 }

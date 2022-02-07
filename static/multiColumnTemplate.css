@@ -523,6 +523,11 @@ a.tert:visited, a.tert:link, a.tert:active {
 	color: white;
 }
 
+a.tert:hover, a.sec:hover {
+	color: #717070;
+	cursor: pointer;
+}
+
 .whole_row {
 	display: inline-block;
 	width: 100%
@@ -534,6 +539,7 @@ a.tert:visited, a.tert:link, a.tert:active {
 	margin-top: 0px;
 	margin-left: auto;
 	width: 33%;
+	min-width: 350px;
 }
 
 .characters_column {
